@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Inventario</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        .navbar {
+            background: #2c3e50;
+            padding: 1rem;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-right: 1rem;
+        }
+        
+        .content {
+            padding: 2rem;
+        }
+        
+        .card {
+            border: 1px solid #ddd;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        button {
+            background: #2c3e50;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        
+        .tab {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+        
+        .tab.active {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 4px;
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-box input {
+            flex: 1;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        .status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            background: #e0e0e0;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Menú de navegación -->
+    <nav class="navbar">
+        <a href="#inicio">Inicio</a>
+        <a href="#productos">Productos</a>
+        <a href="#categorias">Categorías</a>
+        <a href="#stock">Stock</a>
+        <a href="#proveedores">Proveedores</a>
+        <a href="#vendedores">Vendedores</a>
+        <a href="#movimientos">Movimientos</a>
+        <a href="#usuarios">Usuarios</a>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="content">
+        <!-- Sección de Productos -->
+        <div id="productos" class="card">
+            <h2>Gestión de Productos</h2>
+            <button onclick="document.getElementById('modalProducto').style.display='block'">Nuevo Producto</button>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Código</th>
+                            <th>Producto</th>
+                            <th>Descripción</th>
+                            <th>Precio Compra</th>
+                            <th>Precio Venta</th>
+                            <th>Categoría</th>
+                            <th>Proveedor</th>
+                            <th>Stock Actual</th>
+                            <th>Stock Mínimo</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>001</td>
+                            <td>Producto Ejemplo</td>
+                            <td>Descripción del producto</td>
+                            <td>$100.00</td>
+                            <td>$150.00</td>
+                            <td>Categoría 1</td>
+                            <td>Proveedor 1</td>
+                            <td>50</td>
+                            <td>10</td>
+                            <td><span class="status">Activo</span></td>
+                            <td>
+                                <button>Editar</button>
+                                <button>Eliminar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sección de Categorías -->
+        <div id="categorias" class="card">
+            <h2>Gestión de Categorías</h2>
+            <button onclick="document.getElementById('modalCategoria').style.display='block'">Nueva Categoría</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Categoría</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Categoría Ejemplo</td>
+                        <td><span class="status">Activo</span></td>
+                        <td>
+                            <button>Editar</button>
+                            <button>Eliminar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sección de Stock -->
+        <div id="stock" class="card">
+            <h2>Control de Stock</h2>
+            <div class="tabs">
+                <div class="tab active">Entradas</div>
+                <div class="tab">Salidas</div>
+                <div class="tab">Movimientos</div>
+            </div>
+            <div class="search-box">
+                <input type="text" placeholder="Buscar por código o nombre del producto...">
+                <button>Buscar</button>
+            </div>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Movimiento</th>
+                            <th>Producto</th>
+                            <th>Usuario</th>
+                            <th>Vendedor</th>
+                            <th>Cantidad</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Producto 1</td>
+                            <td>Usuario 1</td>
+                            <td>Vendedor 1</td>
+                            <td>10</td>
+                            <td>2024-01-01</td>
+                            <td>14:30:00</td>
+                            <td>Entrada de mercadería</td>
+                            <td><span class="status">Activo</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sección de Proveedores -->
+        <div id="proveedores" class="card">
+            <h2>Gestión de Proveedores</h2>
+            <button onclick="document.getElementById('modalProveedor').style.display='block'">Nuevo Proveedor</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Empresa</th>
+                        <th>RUC</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Dirección</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Empresa Ejemplo</td>
+                        <td>20123456789</td>
+                        <td>123-456-789</td>
+                        <td>ejemplo@empresa.com</td>
+                        <td>Dirección ejemplo</td>
+                        <td><span class="status">Activo</span></td>
+                        <td>
+                            <button>Editar</button>
+                            <button>Eliminar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sección de Vendedores -->
+        <div id="vendedores" class="card">
+            <h2>Gestión de Vendedores</h2>
+            <button onclick="document.getElementById('modalVendedor').style.display='block'">Nuevo Vendedor</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Proveedor</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Proveedor 1</td>
+                        <td>Juan</td>
+                        <td>Pérez</td>
+                        <td>987654321</td>
+                        <td>juan@ejemplo.com</td>
+                        <td><span class="status">Activo</span></td>
+                        <td>
+                            <button>Editar</button>
+                            <button>Eliminar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sección de Usuarios -->
+        <div id="usuarios" class="card">
+            <h2>Gestión de Usuarios</h2>
+            <button onclick="document.getElementById('modalUsuario').style.display='block'">Nuevo Usuario</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Juan</td>
+                        <td>Pérez</td>
+                        <td>juan@ejemplo.com</td>
+                        <td>Administrador</td>
+                        <td><span class="status">Activo</span></td>
+                        <td>
+                            <button>Editar</button>
+                            <button>Eliminar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Producto -->
+    <div id="modalProducto" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('modalProducto').style.display='none'">&times;</span>
+            <h2>Nuevo Producto</h2>
+            <form>
+                <div class="form-group">
+                    <label>Código *</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Producto *</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Precio Compra *</label>
+                    <input type="number" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Precio Venta *</label>
+                    <input type="number" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Categoría *</label>
+                    <select required>
+                        <option value="">Seleccione una categoría</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Proveedor *</label>
+                    <select required>
+                        <option value="">Seleccione un proveedor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Stock Mínimo *</label>
+                    <input type="number" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select required>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Categoría -->
+    <div id="modalCategoria" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('modalCategoria').style.display='none'">&times;</span>
+            <h2>Nueva Categoría</h2>
+            <form>
+                <div class="form-group">
+                    <label>Nombre Categoría *</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select required>
+                        <option value="1">Activo</option><option value="0">Inactivo</option>
+                    </select>
+                </div>
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Proveedor -->
+    <div id="modalProveedor" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('modalProveedor').style.display='none'">&times;</span>
+            <h2>Nuevo Proveedor</h2>
+            <form>
+                <div class="form-group">
+                    <label>Nombre Empresa *</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>RUC</label>
+                    <input type="text">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono Empresa</label>
+                    <input type="tel">
+                </div>
+                <div class="form-group">
+                    <label>Email Empresa</label>
+                    <input type="email">
+                </div>
+                <div class="form-group">
+                    <label>Dirección</label>
+                    <textarea></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select required>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Vendedor -->
+    <div id="modalVendedor" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('modalVendedor').style.display='none'">&times;</span>
+            <h2>Nuevo Vendedor</h2>
+            <form>
+                <div class="form-group">
+                    <label>Proveedor *</label>
+                    <select required>
+                        <option value="">Seleccione un proveedor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nombre *</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Apellido *</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email">
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select required>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Usuario -->
+    <div id="modalUsuario" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('modalUsuario').style.display='none'">&times;</span>
+            <h2>Nuevo Usuario</h2>
+            <form>
+                <div class="form-group">
+                    <label>Nombre *</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Apellido *</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña *</label>
+                    <input type="password" required>
+                </div>
+                <div class="form-group">
+                    <label>Rol *</label>
+                    <select required>
+                        <option value="">Seleccione un rol</option>
+                        <option value="1">Control total del sistema</option>
+                        <option value="2">Gestión de ventas y stock</option>
+                        <option value="3">Control de inventario</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select required>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Movimiento de Stock -->
+    <div id="modalMovimiento" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('modalMovimiento').style.display='none'">&times;</span>
+            <h2>Nuevo Movimiento</h2>
+            <form>
+                <div class="form-group">
+                    <label>Producto *</label>
+                    <input type="text" placeholder="Buscar producto por código o nombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Usuario *</label>
+                    <select required>
+                        <option value="">Seleccione un usuario</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Vendedor</label>
+                    <select>
+                        <option value="">Seleccione un vendedor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Cantidad *</label>
+                    <input type="number" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Fecha Movimiento *</label>
+                    <input type="datetime-local" required>
+                </div>
+                <div class="form-group">
+                    <label>Hora Movimiento *</label>
+                    <input type="time" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select required>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
